@@ -1,0 +1,5 @@
+{
+  "name": "Broker Portal",
+  "description": "A multi-broker management interface allowing registration, deposits, and withdrawals with transaction tracking.",
+  "requestFramePermissions": []
+}
