@@ -59,7 +59,14 @@ export const TransactionPage: React.FC = () => {
 
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof TransactionFormValues, string>> = {};
-    if (!formData.amount) newErrors.amount = "مطلوب";
+    const minAmount = broker.id === 'valetax' ? 10 : 1;
+
+    if (!formData.amount) {
+        newErrors.amount = "مطلوب";
+    } else if (parseFloat(formData.amount) < minAmount) {
+        newErrors.amount = `أقل مبلغ هو ${minAmount}$`;
+    }
+
     if (!formData.tradingAccount) newErrors.tradingAccount = "مطلوب";
     if (!formData.fullName) newErrors.fullName = "مطلوب";
     if (!formData.phoneNumber || formData.phoneNumber.length < 7) newErrors.phoneNumber = "رقم غير صحيح";
@@ -276,7 +283,7 @@ export const TransactionPage: React.FC = () => {
                     value={formData.amount}
                     onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                 />
-                 {errors.amount && <p className="text-red-500 text-[10px] mt-1">مطلوب</p>}
+                 {errors.amount && <p className="text-red-500 text-[10px] mt-1">{errors.amount}</p>}
             </div>
 
             {/* Combined Details Card */}

@@ -59,34 +59,37 @@ export const BrokerPage: React.FC<BrokerPageProps> = ({ broker }) => {
            </div>
         </div>
 
-        {/* Primary Actions - Grid to save space */}
-        <div className="grid grid-cols-2 gap-3 mb-5">
-          {/* Deposit - Prominent */}
-          <Link
-             to={`/${broker.id}/deposit`}
-             className="col-span-1 flex flex-col items-center justify-center py-3 px-2 bg-[#EA9708] text-white rounded-2xl shadow-sm shadow-orange-100 active:scale-95 transition-all"
-          >
-             <ArrowDownCircle size={20} className="mb-1" />
-             <span className="font-bold text-sm">إيداع</span>
-          </Link>
-
-           {/* Withdraw */}
-           <Link
-             to={`/${broker.id}/withdraw`}
-             className="col-span-1 flex flex-col items-center justify-center py-3 px-2 bg-white border border-slate-200 text-slate-700 rounded-2xl active:scale-95 transition-all"
-          >
-             <ArrowUpCircle size={20} className="mb-1" />
-             <span className="font-bold text-sm">سحب</span>
-          </Link>
-
-          {/* Open Account - Full width below */}
+        {/* Primary Actions - Reordered as requested */}
+        <div className="flex flex-col gap-3 mb-5">
+          {/* Open Account - Top Priority */}
           <Link
              to={`/${broker.id}/register`}
-             className="col-span-2 flex items-center justify-center gap-2 py-3 bg-[#1E293B] text-white rounded-2xl shadow-sm active:scale-95 transition-all"
+             className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#1E293B] text-white rounded-2xl shadow-lg shadow-slate-200 active:scale-95 transition-all"
           >
              <UserPlus size={18} />
              <span className="font-bold text-sm">فتح حساب حقيقي</span>
           </Link>
+
+          {/* Deposit & Withdraw - Row */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Deposit */}
+            <Link
+               to={`/${broker.id}/deposit`}
+               className="col-span-1 flex flex-col items-center justify-center py-3 px-2 bg-[#EA9708] text-white rounded-2xl shadow-sm shadow-orange-100 active:scale-95 transition-all"
+            >
+               <ArrowDownCircle size={20} className="mb-1" />
+               <span className="font-bold text-sm">إيداع</span>
+            </Link>
+
+             {/* Withdraw */}
+             <Link
+               to={`/${broker.id}/withdraw`}
+               className="col-span-1 flex flex-col items-center justify-center py-3 px-2 bg-white border border-slate-200 text-slate-700 rounded-2xl active:scale-95 transition-all"
+            >
+               <ArrowUpCircle size={20} className="mb-1" />
+               <span className="font-bold text-sm">سحب</span>
+            </Link>
+          </div>
         </div>
 
         {/* Tabs - Compact */}
