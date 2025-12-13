@@ -39,7 +39,7 @@ export const BrokerPage: React.FC<BrokerPageProps> = ({ broker }) => {
         
         {/* Compact Hero Card */}
         <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 mb-4 flex items-center gap-4">
-            <div className="w-16 h-16 shrink-0 rounded-2xl bg-slate-50 p-2 flex items-center justify-center border border-slate-100">
+            <div className={`w-24 h-16 shrink-0 rounded-2xl p-2 flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden ${broker.id === 'valetax' ? 'bg-black' : 'bg-white'}`}>
               <img 
                 src={broker.logoUrl} 
                 alt={broker.name} 
@@ -124,7 +124,7 @@ export const BrokerPage: React.FC<BrokerPageProps> = ({ broker }) => {
                     {/* Badges */}
                     <div className="flex gap-2 mb-4 overflow-x-auto pb-1 no-scrollbar">
                         <span className="shrink-0 px-2.5 py-1 bg-[#FEF3C7] text-[#D97706] text-[10px] font-bold rounded-lg border border-[#FDE68A]">
-                            أقل إيداع 1$
+                            {broker.id === 'valetax' ? 'أقل إيداع 10$' : 'أقل إيداع 1$'}
                         </span>
                         <span className="shrink-0 px-2.5 py-1 bg-[#D1FAE5] text-[#059669] text-[10px] font-bold rounded-lg border border-[#A7F3D0]">
                             %0 عمولة

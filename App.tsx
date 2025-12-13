@@ -25,11 +25,13 @@ const LandingPage = () => {
                     to={`/${broker.id}`}
                     className="flex items-center p-4 bg-white hover:bg-white border border-slate-200 hover:border-slate-300 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 group"
                 >
-                    <img 
-                        src={broker.logoUrl} 
-                        alt={broker.name} 
-                        className="w-12 h-12 rounded-lg object-cover bg-slate-100"
-                    />
+                    <div className={`w-16 h-14 shrink-0 rounded-xl border border-slate-100 p-1 flex items-center justify-center overflow-hidden shadow-sm ${broker.id === 'valetax' ? 'bg-black' : 'bg-white'}`}>
+                        <img 
+                            src={broker.logoUrl} 
+                            alt={broker.name} 
+                            className="w-full h-full object-contain"
+                        />
+                    </div>
                     <div className="mr-4 flex-1">
                         <h2 className="text-base font-bold text-slate-900">{broker.name}</h2>
                         <p className="text-xs text-slate-500">{broker.description}</p>

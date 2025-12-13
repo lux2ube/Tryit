@@ -4,9 +4,9 @@ import { TransactionType, TransactionFormValues, Broker } from '../types';
 import { YemenFlag } from './YemenFlag';
 import { generateTransactionId } from '../utils/idGenerator';
 
-// TODO: Replace these with your actual Telegram Bot Token and Chat ID
-const TELEGRAM_BOT_TOKEN = ''; 
-const TELEGRAM_CHAT_ID = '';
+// Configured via environment variables
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN; 
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -301,37 +301,3 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
       </form>
     );
   };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div 
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
-      />
-      
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white sticky top-0 z-10">
-            <div className="flex items-center gap-3">
-                <div className={`w-2 h-2 rounded-full ${type === 'deposit' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                <h2 className="text-lg font-bold text-slate-900 capitalize tracking-tight">
-                {isRegister ? 'Register' : type}
-                </h2>
-                <span className="text-slate-400 text-sm">/ {broker.name}</span>
-            </div>
-          <button 
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Scrollable Body */}
-        <div className="px-6 py-2 overflow-y-auto custom-scrollbar">
-          {renderContent()}
-        </div>
-      </div>
-    </div>
-  );
-};

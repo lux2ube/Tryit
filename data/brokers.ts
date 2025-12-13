@@ -5,14 +5,14 @@ export const brokers: Record<string, Broker> = {
     id: 'headway',
     name: 'Headway',
     description: 'منصة سهلة جداً في الاستخدام وتناسب الجميع. ابدأ استثمارك حتى بـ 1$ فقط',
-    logoUrl: 'https://i.ibb.co/1nN1X5P/headway-logo.png', // Placeholder, using a generic if this fails, but keeping structure
+    logoUrl: 'https://hw.online/wp-content/themes/headway/img/logo.svg',
     themeColor: 'blue',
   },
   valetax: {
     id: 'valetax',
     name: 'Valetax',
     description: 'خدمات تداول ECN متميزة مع تنفيذ فوري للصفقات.',
-    logoUrl: 'https://picsum.photos/id/104/200/200', 
+    logoUrl: 'https://valetax.com/wp-content/uploads/valetax-logo.svg', 
     themeColor: 'teal',
   }
 };

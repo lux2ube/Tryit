@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronRight, CheckCircle, AlertCircle, MessageCircle, ShieldCheck, User, CreditCard } from 'lucide-react';
+import { ChevronRight, CheckCircle, AlertCircle, MessageCircle, ShieldCheck, User, CreditCard, Copy, Check } from 'lucide-react';
 import { TransactionType, TransactionFormValues } from '../types';
 import { YemenFlag } from './YemenFlag';
 import { generateTransactionId } from '../utils/idGenerator';
 import { brokers } from '../data/brokers';
 
-// Configured with provided credentials
-const TELEGRAM_BOT_TOKEN = '7701190517:AAHR4nJDg1B6YpVzNdiprh7jQlmq6PTv84A'; 
-const TELEGRAM_CHAT_ID = '-1003325351270';
+// Configured via environment variables
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN; 
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 export const TransactionPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ export const TransactionPage: React.FC = () => {
 
   const [step, setStep] = useState<'form' | 'processing' | 'success'>('form');
   const [transactionId, setTransactionId] = useState<string>('');
+  const [copied, setCopied] = useState(false);
   const [errors, setErrors] = useState<Partial<Record<keyof TransactionFormValues, string>>>({});
   
   const [formData, setFormData] = useState<TransactionFormValues>({
@@ -29,6 +30,24 @@ export const TransactionPage: React.FC = () => {
     notes: '',
     acceptedTerms: false
   });
+
+  // Load saved user details on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('user_transaction_details');
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData);
+        setFormData(prev => ({
+          ...prev,
+          tradingAccount: parsed.tradingAccount || '',
+          fullName: parsed.fullName || '',
+          phoneNumber: parsed.phoneNumber || ''
+        }));
+      } catch (e) {
+        console.error("Failed to restore form data", e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!broker || !['deposit', 'withdraw', 'register'].includes(type)) {
@@ -44,7 +63,7 @@ export const TransactionPage: React.FC = () => {
     if (!formData.tradingAccount) newErrors.tradingAccount = "مطلوب";
     if (!formData.fullName) newErrors.fullName = "مطلوب";
     if (!formData.phoneNumber || formData.phoneNumber.length < 7) newErrors.phoneNumber = "رقم غير صحيح";
-    if (!formData.acceptedTerms) newErrors.acceptedTerms = "مطلوب";
+    if (!formData.acceptedTerms) newErrors.acceptedTerms = "يجب الموافقة على الشروط للمتابعة";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -87,6 +106,13 @@ export const TransactionPage: React.FC = () => {
     e.preventDefault();
     if (!validate()) return;
 
+    // Save user details for next time (excluding sensitive/variable info like amount)
+    localStorage.setItem('user_transaction_details', JSON.stringify({
+        tradingAccount: formData.tradingAccount,
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber
+    }));
+
     setStep('processing');
     
     setTimeout(async () => {
@@ -95,6 +121,12 @@ export const TransactionPage: React.FC = () => {
       await sendTelegramNotification(newId);
       setStep('success');
     }, 1500);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(transactionId);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const isRegister = type === 'register';
@@ -134,13 +166,13 @@ export const TransactionPage: React.FC = () => {
 
   const renderSuccess = () => {
     const whatsappText = encodeURIComponent(
-        `مرحباً، أريد تسريع طلبي.\n\n` +
+        `مرحباً، أريد إتمام طلبي.\n\n` +
         `🆔 رقم العملية: ${transactionId}\n` +
         `📌 النوع: ${type === 'deposit' ? 'إيداع' : 'سحب'}\n` +
         `💰 المبلغ: ${formData.amount} دولار\n` +
         `🏢 الوسيط: ${broker.name}\n` +
         `💼 الحساب: ${formData.tradingAccount}\n\n` +
-        `يرجى معالجة الطلب.`
+        `يرجى التنفيذ.`
     );
     const whatsappUrl = `https://wa.me/967733353380?text=${whatsappText}`;
 
@@ -151,11 +183,28 @@ export const TransactionPage: React.FC = () => {
                     <CheckCircle size={32} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-1">تم تقديم الطلب</h3>
-                <p className="text-slate-500 text-xs mb-4">طلبك قيد المعالجة حالياً.</p>
+                <p className="text-slate-500 text-xs mb-4">تم تسجيل الطلب بنجاح.</p>
                 
-                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 mb-6">
-                    <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1">رقم العملية</p>
-                    <p className="font-mono text-lg font-bold text-slate-800 select-all">{transactionId}</p>
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 mb-4 flex items-center justify-between">
+                    <div className="text-right">
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1">رقم العملية</p>
+                        <p className="font-mono text-lg font-bold text-slate-800 select-all">{transactionId}</p>
+                    </div>
+                    <button 
+                        onClick={handleCopy}
+                        className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-blue-600 hover:border-blue-200 active:bg-blue-50 transition-all shadow-sm"
+                        title="نسخ رقم العملية"
+                    >
+                        {copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+                    </button>
+                </div>
+
+                {/* Direct Tip Message without Title */}
+                <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 mb-6 flex items-start gap-2 text-right">
+                    <span className="text-lg mt-[-3px]">💡</span>
+                    <p className="text-[11px] text-amber-800 font-medium leading-snug">
+                       لتنفيذ طلبك بشكل فوري، يرجى إرسال تفاصيل العملية عبر واتساب الآن.
+                    </p>
                 </div>
 
                 <div className="space-y-2">
@@ -166,7 +215,7 @@ export const TransactionPage: React.FC = () => {
                     className="flex items-center justify-center w-full py-3 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20bd5a] transition-colors shadow-lg shadow-green-100 text-sm"
                     >
                     <MessageCircle className="ml-2" size={18} />
-                    تسريع الطلب عبر واتساب
+                    إرسال الطلب عبر واتساب
                     </a>
                     
                     <button
@@ -208,8 +257,8 @@ export const TransactionPage: React.FC = () => {
         <span className="font-bold text-slate-900 text-sm">
              {type === 'deposit' ? 'إيداع' : 'سحب'} ({broker.name})
         </span>
-        <div className="w-7 h-7 rounded-lg overflow-hidden border border-slate-100">
-             <img src={broker.logoUrl} alt={broker.name} className="w-full h-full object-cover" />
+        <div className={`w-10 h-10 rounded-xl border border-slate-200 p-1 flex items-center justify-center overflow-hidden ${broker.id === 'valetax' ? 'bg-black' : 'bg-white'}`}>
+             <img src={broker.logoUrl} alt={broker.name} className="w-full h-full object-contain" />
         </div>
       </div>
 
@@ -302,14 +351,39 @@ export const TransactionPage: React.FC = () => {
 
             {/* Submit */}
             <div className="pt-2">
-                <label className="flex items-center gap-2 mb-4 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        className="w-4 h-4 text-blue-600 rounded border-slate-300"
-                        checked={formData.acceptedTerms}
-                        onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
-                    />
-                    <span className="text-[10px] text-slate-500 font-medium">أوافق على الشروط والأحكام</span>
+                <label className="flex items-center gap-2 mb-4 cursor-pointer select-none">
+                    <div className="relative flex items-center">
+                        <input
+                            type="checkbox"
+                            className={`w-4 h-4 rounded transition-colors ${
+                                errors.acceptedTerms 
+                                ? 'border-red-500 ring-2 ring-red-200 shadow-sm shadow-red-100' 
+                                : 'border-slate-300 text-blue-600 focus:ring-blue-500'
+                            }`}
+                            checked={formData.acceptedTerms}
+                            onChange={(e) => {
+                                setFormData({ ...formData, acceptedTerms: e.target.checked });
+                                if (e.target.checked && errors.acceptedTerms) {
+                                    setErrors(prev => ({ ...prev, acceptedTerms: undefined }));
+                                }
+                            }}
+                        />
+                    </div>
+                    <span className={`text-[10px] font-medium transition-colors ${
+                        errors.acceptedTerms ? 'text-red-600 font-bold' : 'text-slate-500'
+                    }`}>
+                        {errors.acceptedTerms ? 'يجب الموافقة على ' : 'أوافق على '}
+                        <a 
+                            href="https://ycoincash.com/terms" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="underline text-slate-700 hover:text-blue-600"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            الشروط والأحكام
+                        </a>
+                        {errors.acceptedTerms && ' للمتابعة'}
+                    </span>
                 </label>
 
                 <button
