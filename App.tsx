@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route, Link, useParams } from 'react-rout
 import { BrokerPage } from './components/BrokerPage';
 import { TransactionPage } from './components/TransactionPage';
 import { brokers } from './data/brokers';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ShieldCheck } from 'lucide-react';
 
 const LandingPage = () => {
   return (
@@ -14,8 +14,8 @@ const LandingPage = () => {
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm mb-4 text-slate-900">
                <ShieldCheck size={24} />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">Select Broker</h1>
-            <p className="text-slate-500 text-sm">Choose a partner to proceed</p>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">اختر الوسيط</h1>
+            <p className="text-slate-500 text-sm">اختر شريك التداول للمتابعة</p>
         </div>
         
         <div className="space-y-4">
@@ -30,12 +30,13 @@ const LandingPage = () => {
                         alt={broker.name} 
                         className="w-12 h-12 rounded-lg object-cover bg-slate-100"
                     />
-                    <div className="ml-4 flex-1">
+                    <div className="mr-4 flex-1">
                         <h2 className="text-base font-bold text-slate-900">{broker.name}</h2>
                         <p className="text-xs text-slate-500">{broker.description}</p>
                     </div>
                     <div className="w-8 h-8 rounded-full bg-slate-50 group-hover:bg-slate-900 flex items-center justify-center transition-colors">
-                        <ArrowRight size={14} className="text-slate-400 group-hover:text-white" />
+                        {/* ArrowLeft because RTL */}
+                        <ArrowLeft size={14} className="text-slate-400 group-hover:text-white" />
                     </div>
                 </Link>
             ))}
@@ -51,7 +52,7 @@ const BrokerPageWrapper = () => {
     const broker = brokerId ? brokers[brokerId] : null;
 
     if (!broker) {
-        return <div className="p-10 text-center">Broker not found</div>;
+        return <div className="p-10 text-center">الوسيط غير موجود</div>;
     }
 
     return <BrokerPage broker={broker} />;

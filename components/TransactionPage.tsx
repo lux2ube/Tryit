@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, CheckCircle, AlertCircle, MessageCircle, ShieldCheck, FileText, User, CreditCard } from 'lucide-react';
+import { ChevronRight, CheckCircle, AlertCircle, MessageCircle, ShieldCheck, User, CreditCard } from 'lucide-react';
 import { TransactionType, TransactionFormValues } from '../types';
 import { YemenFlag } from './YemenFlag';
 import { generateTransactionId } from '../utils/idGenerator';
 import { brokers } from '../data/brokers';
 
-// TODO: Replace these with your actual Telegram Bot Token and Chat ID
-const TELEGRAM_BOT_TOKEN = ''; 
-const TELEGRAM_CHAT_ID = '';
+// Configured with provided credentials
+const TELEGRAM_BOT_TOKEN = '7701190517:AAHR4nJDg1B6YpVzNdiprh7jQlmq6PTv84A'; 
+const TELEGRAM_CHAT_ID = '-1003325351270';
 
 export const TransactionPage: React.FC = () => {
   const navigate = useNavigate();
@@ -40,11 +40,11 @@ export const TransactionPage: React.FC = () => {
 
   const validate = (): boolean => {
     const newErrors: Partial<Record<keyof TransactionFormValues, string>> = {};
-    if (!formData.amount) newErrors.amount = "Required";
-    if (!formData.tradingAccount) newErrors.tradingAccount = "Required";
-    if (!formData.fullName) newErrors.fullName = "Required";
-    if (!formData.phoneNumber || formData.phoneNumber.length < 7) newErrors.phoneNumber = "Invalid";
-    if (!formData.acceptedTerms) newErrors.acceptedTerms = "Required";
+    if (!formData.amount) newErrors.amount = "مطلوب";
+    if (!formData.tradingAccount) newErrors.tradingAccount = "مطلوب";
+    if (!formData.fullName) newErrors.fullName = "مطلوب";
+    if (!formData.phoneNumber || formData.phoneNumber.length < 7) newErrors.phoneNumber = "رقم غير صحيح";
+    if (!formData.acceptedTerms) newErrors.acceptedTerms = "مطلوب";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -53,17 +53,18 @@ export const TransactionPage: React.FC = () => {
   const sendTelegramNotification = async (id: string) => {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
 
+    // Telegram message in Arabic/English mix for admin clarity
     const message = `
-🆕 *New Request Submitted*
+🆕 *طلب جديد*
 -----------------------------
-🆔 *ID:* \`${id}\`
-📌 *Type:* ${type.toUpperCase()}
-🏢 *Broker:* ${broker.name}
-💰 *Amount:* $${formData.amount}
-👤 *Name:* ${formData.fullName}
-📱 *Phone:* +967 ${formData.phoneNumber}
-💼 *Account:* \`${formData.tradingAccount}\`
-📝 *Notes:* ${formData.notes || 'None'}
+🆔 *رقم العملية:* \`${id}\`
+📌 *النوع:* ${type === 'deposit' ? 'إيداع' : (type === 'withdraw' ? 'سحب' : 'تسجيل')}
+🏢 *الوسيط:* ${broker.name}
+💰 *المبلغ:* $${formData.amount}
+👤 *الاسم:* ${formData.fullName}
+📱 *الهاتف:* +967 ${formData.phoneNumber}
+💼 *الحساب:* \`${formData.tradingAccount}\`
+📝 *ملاحظات:* ${formData.notes || 'لا يوجد'}
 -----------------------------
     `.trim();
 
@@ -103,28 +104,28 @@ export const TransactionPage: React.FC = () => {
   const renderRegister = () => (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50">
       <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-sm text-center">
-        <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-6">
-          <AlertCircle size={40} strokeWidth={1.5} />
+        <div className="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 mb-4">
+          <AlertCircle size={32} strokeWidth={1.5} />
         </div>
-        <h3 className="text-xl font-bold text-slate-900 mb-3">Redirecting</h3>
-        <p className="text-slate-500 text-sm mb-8">
-            You will be redirected to the {broker.name} registration page.
+        <h3 className="text-lg font-bold text-slate-900 mb-2">جاري التوجيه</h3>
+        <p className="text-slate-500 text-xs mb-6">
+            سيتم تحويلك إلى صفحة تسجيل {broker.name}.
         </p>
-        <div className="space-y-3">
+        <div className="space-y-2">
           <button
             onClick={() => {
               navigate(`/${broker.id}`);
-              alert(`Redirecting to ${broker.name}...`);
+              alert(`جاري التحويل إلى ${broker.name}...`);
             }}
-            className="w-full py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors"
+            className="w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors text-sm"
           >
-            Continue
+            متابعة
           </button>
           <button
             onClick={() => navigate(`/${broker.id}`)}
-            className="w-full py-3.5 text-slate-500 font-medium hover:bg-slate-50 rounded-xl transition-colors"
+            className="w-full py-3 text-slate-500 font-medium hover:bg-slate-50 rounded-xl transition-colors text-sm"
           >
-            Cancel
+            إلغاء
           </button>
         </div>
       </div>
@@ -133,46 +134,46 @@ export const TransactionPage: React.FC = () => {
 
   const renderSuccess = () => {
     const whatsappText = encodeURIComponent(
-        `Hello, I would like to accelerate my request.\n\n` +
-        `🆔 Transaction ID: ${transactionId}\n` +
-        `📌 Type: ${type.toUpperCase()}\n` +
-        `💰 Amount: ${formData.amount} USD\n` +
-        `🏢 Broker: ${broker.name}\n` +
-        `💼 Account: ${formData.tradingAccount}\n\n` +
-        `Please process this request.`
+        `مرحباً، أريد تسريع طلبي.\n\n` +
+        `🆔 رقم العملية: ${transactionId}\n` +
+        `📌 النوع: ${type === 'deposit' ? 'إيداع' : 'سحب'}\n` +
+        `💰 المبلغ: ${formData.amount} دولار\n` +
+        `🏢 الوسيط: ${broker.name}\n` +
+        `💼 الحساب: ${formData.tradingAccount}\n\n` +
+        `يرجى معالجة الطلب.`
     );
     const whatsappUrl = `https://wa.me/967733353380?text=${whatsappText}`;
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50">
-            <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-sm text-center animate-in zoom-in-95 duration-300">
-                <div className="mx-auto w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-green-600 mb-6">
-                    <CheckCircle size={40} strokeWidth={1.5} />
+            <div className="w-full max-w-sm bg-white p-6 rounded-3xl shadow-sm text-center animate-in zoom-in-95 duration-300">
+                <div className="mx-auto w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-green-600 mb-4">
+                    <CheckCircle size={32} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Request Submitted</h3>
-                <p className="text-slate-500 text-sm mb-6">Your request is being processed.</p>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">تم تقديم الطلب</h3>
+                <p className="text-slate-500 text-xs mb-4">طلبك قيد المعالجة حالياً.</p>
                 
-                <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-8">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-1">Transaction ID</p>
-                    <p className="font-mono text-xl font-bold text-slate-800 select-all">{transactionId}</p>
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 mb-6">
+                    <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold mb-1">رقم العملية</p>
+                    <p className="font-mono text-lg font-bold text-slate-800 select-all">{transactionId}</p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                     <a 
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center w-full py-3.5 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20bd5a] transition-colors shadow-lg shadow-green-100"
+                    className="flex items-center justify-center w-full py-3 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20bd5a] transition-colors shadow-lg shadow-green-100 text-sm"
                     >
-                    <MessageCircle className="mr-2" size={20} />
-                    Accelerate via WhatsApp
+                    <MessageCircle className="ml-2" size={18} />
+                    تسريع الطلب عبر واتساب
                     </a>
                     
                     <button
                     onClick={() => navigate(`/${broker.id}`)}
-                    className="w-full py-3.5 bg-white border border-slate-200 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition-colors"
+                    className="w-full py-3 bg-white border border-slate-200 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition-colors text-sm"
                     >
-                    Back to Broker
+                    العودة للوسيط
                     </button>
                 </div>
             </div>
@@ -182,8 +183,8 @@ export const TransactionPage: React.FC = () => {
 
   const renderProcessing = () => (
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-      <div className="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-      <p className="text-slate-500 font-medium">Processing...</p>
+      <div className="w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
+      <p className="text-slate-500 font-medium text-sm">جاري المعالجة...</p>
     </div>
   );
 
@@ -194,156 +195,130 @@ export const TransactionPage: React.FC = () => {
   if (step === 'processing') return renderProcessing();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans pb-24">
+    <div className="min-h-screen bg-[#F8FAFC] font-sans pb-10">
       
-      {/* Header */}
-      <div className="bg-white px-6 py-4 sticky top-0 z-10 flex items-center justify-between shadow-sm/50">
+      {/* Header Compact */}
+      <div className="bg-white px-4 py-3 sticky top-0 z-10 flex items-center justify-between shadow-sm border-b border-slate-100">
         <button 
             onClick={() => navigate(`/${broker.id}`)}
-            className="p-2 -ml-2 text-slate-400 hover:text-slate-900 rounded-full transition-colors"
+            className="p-1.5 -mr-1 text-slate-400 hover:text-slate-900 rounded-full transition-colors"
         >
-            <ChevronLeft size={24} />
+            <ChevronRight size={22} />
         </button>
-        <div className="text-center">
-            <h1 className="text-base font-bold text-slate-900 capitalize">
-                {type === 'deposit' ? 'Deposit Funds' : 'Withdraw Funds'}
-            </h1>
-            <span className="text-xs text-slate-400 px-2 py-0.5 bg-slate-50 rounded-full">{broker.name}</span>
-        </div>
-        <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-100">
+        <span className="font-bold text-slate-900 text-sm">
+             {type === 'deposit' ? 'إيداع' : 'سحب'} ({broker.name})
+        </span>
+        <div className="w-7 h-7 rounded-lg overflow-hidden border border-slate-100">
              <img src={broker.logoUrl} alt={broker.name} className="w-full h-full object-cover" />
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
+      <div className="max-w-md mx-auto px-4 py-4">
         
-        {/* Card 1: Amount */}
-        <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-slate-100/50">
-            <label className="block text-sm font-semibold text-blue-600 mb-4">
-                Requested Amount
-            </label>
-            <div className="relative inline-block w-full max-w-[200px]">
-                 <input
+        <form onSubmit={handleSubmit} className="space-y-3">
+            
+            {/* Amount - Top Card */}
+            <div className="bg-white rounded-2xl p-4 text-center shadow-sm border border-slate-200">
+                <label className="block text-xs font-bold text-blue-600 mb-1">المبلغ ($)</label>
+                <input
                     type="number"
                     placeholder="0"
-                    className="w-full text-center text-5xl font-bold text-slate-900 placeholder:text-slate-200 outline-none bg-transparent"
+                    className="w-full text-center text-3xl font-bold text-slate-900 placeholder:text-slate-200 outline-none bg-transparent"
                     value={formData.amount}
                     onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                 />
-                <span className="absolute top-1/2 -translate-y-1/2 -right-4 text-2xl text-slate-300 font-medium">$</span>
-            </div>
-            {errors.amount && <p className="text-red-500 text-xs mt-2">Please enter amount</p>}
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* Card 2: Account Data */}
-            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100/50">
-                <div className="flex items-center gap-2 mb-4">
-                    <CreditCard size={18} className="text-slate-400" />
-                    <h2 className="text-sm font-bold text-slate-900">Account Data</h2>
-                </div>
-                
-                <div className="space-y-1">
-                    <label className="text-xs text-slate-400 ml-1">Trading Account Number</label>
-                    <input
-                        type="text"
-                        placeholder="e.g. 882133"
-                        className="w-full px-4 py-3 bg-slate-50 rounded-xl text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 transition-all font-medium text-lg placeholder:font-normal placeholder:text-slate-300"
-                        value={formData.tradingAccount}
-                        onChange={(e) => setFormData({ ...formData, tradingAccount: e.target.value })}
-                    />
-                    <p className="text-[10px] text-slate-400 px-1 mt-1">Make sure to enter the MT4/MT5 account number.</p>
-                    {errors.tradingAccount && <p className="text-red-500 text-xs px-1">Required</p>}
-                </div>
+                 {errors.amount && <p className="text-red-500 text-[10px] mt-1">مطلوب</p>}
             </div>
 
-            {/* Card 3: Personal Data */}
-            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100/50">
-                <div className="flex items-center gap-2 mb-4">
-                    <User size={18} className="text-slate-400" />
-                    <h2 className="text-sm font-bold text-slate-900">Personal Data</h2>
-                </div>
+            {/* Combined Details Card */}
+            <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
                 
-                <div className="space-y-4">
-                    <div className="space-y-1">
-                        <label className="text-xs text-slate-400 ml-1">Full Name</label>
+                {/* Account */}
+                <div>
+                    <label className="text-[10px] font-bold text-slate-400 mb-1 block">رقم الحساب</label>
+                    <div className="relative">
                         <input
                             type="text"
-                            placeholder="Your Full Name"
-                            className="w-full px-4 py-3 bg-slate-50 rounded-xl text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-right placeholder:text-left dir-rtl font-medium"
+                            placeholder="مثال: 882133"
+                            className="w-full pl-3 pr-3 py-2.5 bg-slate-50 rounded-xl text-slate-900 text-sm font-semibold outline-none focus:ring-1 focus:ring-blue-500 transition-all text-left"
+                            dir="ltr"
+                            value={formData.tradingAccount}
+                            onChange={(e) => setFormData({ ...formData, tradingAccount: e.target.value })}
+                        />
+                        <CreditCard size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    </div>
+                     {errors.tradingAccount && <p className="text-red-500 text-[10px] mt-0.5">مطلوب</p>}
+                </div>
+
+                 {/* Name */}
+                <div>
+                    <label className="text-[10px] font-bold text-slate-400 mb-1 block">الاسم الكامل</label>
+                     <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="الاسم الرباعي"
+                            className="w-full pl-3 pr-3 py-2.5 bg-slate-50 rounded-xl text-slate-900 text-sm font-semibold outline-none focus:ring-1 focus:ring-blue-500 transition-all"
                             value={formData.fullName}
                             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                         />
-                         {errors.fullName && <p className="text-red-500 text-xs px-1">Required</p>}
+                         <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     </div>
+                     {errors.fullName && <p className="text-red-500 text-[10px] mt-0.5">مطلوب</p>}
+                </div>
 
-                    <div className="space-y-1">
-                        <label className="text-xs text-slate-400 ml-1">Phone Number (WhatsApp)</label>
-                        <div className="flex items-center bg-slate-50 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-                             <div className="flex items-center gap-2 px-4 py-3 bg-slate-100 text-slate-600 border-r border-slate-200">
-                                <YemenFlag className="w-5 h-3.5" />
-                                <span className="font-bold text-sm tracking-wide">+967</span>
-                            </div>
-                            <input
-                                type="tel"
-                                placeholder="77x xxx xxx"
-                                className="flex-1 px-4 py-3 bg-transparent outline-none text-slate-900 font-medium placeholder:text-slate-300 text-lg tracking-wide"
-                                value={formData.phoneNumber}
-                                onChange={(e) => {
-                                    const val = e.target.value.replace(/\D/g, '');
-                                    setFormData({ ...formData, phoneNumber: val })
-                                }}
-                            />
+                {/* Phone */}
+                <div>
+                    <label className="text-[10px] font-bold text-slate-400 mb-1 block">رقم الهاتف (واتساب)</label>
+                    <div className="flex items-center bg-slate-50 rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-blue-500" dir="ltr">
+                            <div className="flex items-center gap-1.5 px-3 py-2.5 bg-slate-100 text-slate-600 border-r border-slate-200">
+                            <YemenFlag className="w-4 h-3" />
+                            <span className="font-bold text-xs tracking-wide">+967</span>
                         </div>
-                        {errors.phoneNumber && <p className="text-red-500 text-xs px-1">Invalid number</p>}
+                        <input
+                            type="tel"
+                            placeholder="77x xxx xxx"
+                            className="flex-1 px-3 py-2.5 bg-transparent outline-none text-slate-900 font-semibold placeholder:text-slate-300 text-sm tracking-wide"
+                            value={formData.phoneNumber}
+                            onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                setFormData({ ...formData, phoneNumber: val })
+                            }}
+                        />
                     </div>
+                    {errors.phoneNumber && <p className="text-red-500 text-[10px] mt-0.5">غير صحيح</p>}
+                </div>
+
+                {/* Notes (Collapsed/Small) */}
+                <div>
+                    <label className="text-[10px] font-bold text-slate-400 mb-1 block">ملاحظات (اختياري)</label>
+                    <textarea
+                        rows={2}
+                        className="w-full px-3 py-2 bg-slate-50 rounded-xl text-slate-900 text-xs outline-none focus:ring-1 focus:ring-blue-500 transition-all resize-none"
+                        value={formData.notes}
+                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    />
                 </div>
             </div>
 
-            {/* Card 4: Notes */}
-            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100/50">
-                <div className="flex items-center gap-2 mb-4">
-                    <FileText size={18} className="text-slate-400" />
-                    <h2 className="text-sm font-bold text-slate-900">Additional Notes <span className="font-normal text-slate-400">(Optional)</span></h2>
-                </div>
-                <textarea
-                    rows={3}
-                    placeholder="Any special instructions..."
-                    className="w-full px-4 py-3 bg-slate-50 rounded-xl text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 transition-all resize-none placeholder:text-slate-300"
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                />
-            </div>
-
-            {/* Terms and Submit */}
-            <div className="pt-2 pb-6">
-                <div className="flex items-center justify-center gap-3 mb-6 bg-white p-4 rounded-2xl border border-slate-100">
+            {/* Submit */}
+            <div className="pt-2">
+                <label className="flex items-center gap-2 mb-4 cursor-pointer">
                     <input
-                        id="terms"
                         type="checkbox"
-                        className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer"
+                        className="w-4 h-4 text-blue-600 rounded border-slate-300"
                         checked={formData.acceptedTerms}
                         onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
                     />
-                    <label htmlFor="terms" className="text-xs text-slate-500 cursor-pointer select-none">
-                         I agree to the <span className="text-blue-600 font-semibold">Terms & Conditions</span>
-                    </label>
-                </div>
+                    <span className="text-[10px] text-slate-500 font-medium">أوافق على الشروط والأحكام</span>
+                </label>
 
                 <button
                     type="submit"
-                    className="w-full py-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-lg rounded-2xl shadow-lg shadow-blue-200 transition-all transform active:scale-[0.98]"
+                    className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl shadow-lg shadow-slate-200 transition-all active:scale-[0.98]"
                 >
-                    Confirm {type === 'deposit' ? 'Deposit' : 'Withdrawal'}
+                    {type === 'deposit' ? 'تأكيد الطلب' : 'تأكيد الطلب'}
                 </button>
-
-                 <div className="mt-6 flex items-center justify-center gap-2 text-slate-300 text-[10px] font-medium uppercase tracking-widest">
-                    <ShieldCheck size={12} />
-                    <span>Encrypted & Secure</span>
-                </div>
             </div>
-
         </form>
       </div>
     </div>
