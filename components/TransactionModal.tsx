@@ -31,15 +31,23 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
-      setStep('form');
-      setFormData({
-        amount: '',
-        tradingAccount: '',
-        fullName: '',
-        phoneNumber: '',
-        acceptedTerms: false
-      });
-      setErrors({});
+      if (type === 'register') {
+        // Auto-redirect to referral link for registration
+        if (broker.referralLink) {
+          window.open(broker.referralLink, '_blank');
+        }
+        onClose();
+      } else {
+        setStep('form');
+        setFormData({
+          amount: '',
+          tradingAccount: '',
+          fullName: '',
+          phoneNumber: '',
+          acceptedTerms: false
+        });
+        setErrors({});
+      }
     }
   }, [isOpen]);
 
@@ -138,40 +146,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
   // Render content based on step
   const renderContent = () => {
     if (isRegister) {
-      return (
-        <div className="space-y-8 text-center py-4">
-          <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
-            <AlertCircle size={36} strokeWidth={1.5} />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">التوجيه إلى الوسيط</h3>
-            <p className="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">
-                سيتم توجيهك الآن إلى صفحة التسجيل الرسمية لـ {broker.name}.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3">
-            <a
-              href={broker.referralLink || '#'}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                if (!broker.referralLink) {
-                  alert(`رابط التسجيل غير متاح للوسيط ${broker.name}`);
-                }
-              }}
-              className="w-full py-3.5 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
-            >
-              المتابعة إلى التسجيل
-            </a>
-             <button
-              onClick={onClose}
-              className="w-full py-3.5 text-slate-500 font-medium hover:text-slate-800 transition-colors"
-            >
-              إلغاء
-            </button>
-          </div>
-        </div>
-      );
+      return null; // Auto-redirect handled in useEffect
     }
 
     if (step === 'success') {

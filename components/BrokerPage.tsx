@@ -127,7 +127,7 @@ export const BrokerPage: React.FC<BrokerPageProps> = ({ broker }) => {
                     {/* Badges */}
                     <div className="flex gap-2 mb-4 overflow-x-auto pb-1 no-scrollbar">
                         <span className="shrink-0 px-2.5 py-1 bg-[#FEF3C7] text-[#D97706] text-[10px] font-bold rounded-lg border border-[#FDE68A]">
-                            {broker.id === 'valetax' ? 'أقل إيداع 10$' : 'أقل إيداع 1$'}
+                            {broker.id === 'valetax' || broker.id === 'oneroyal' ? 'أقل إيداع 10$' : 'أقل إيداع 1$'}
                         </span>
                         <span className="shrink-0 px-2.5 py-1 bg-[#D1FAE5] text-[#059669] text-[10px] font-bold rounded-lg border border-[#A7F3D0]">
                             %0 عمولة
@@ -260,6 +260,94 @@ export const BrokerPage: React.FC<BrokerPageProps> = ({ broker }) => {
                                     Valetax ECN
                                 </span>
                                 </div>
+                        </div>
+                    </div>
+               ) : broker.id === 'oneroyal' ? (
+                   // --- OneRoyal Specific Details ---
+                   <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Lightbulb size={20} className="text-amber-600" />
+                            <h2 className="text-lg font-bold text-slate-900">لمحة عن وسيط {broker.name}</h2>
+                        </div>
+                        
+                        <p className="text-slate-600 text-sm leading-relaxed mb-6">
+                            منصة تداول موثوقة وآمنة تقدم ظروف تداول منافسة للمتداولين المبتدئين والمحترفين، مع خدمة عملاء متميزة وحد أدنى للإيداع محدود جداً.
+                        </p>
+
+                        <div className="space-y-4">
+                            {/* Feature 1 */}
+                            <div className="flex gap-3">
+                                <div className="w-10 h-10 shrink-0 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+                                    <Wallet size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-0.5">إيداع منخفض جداً</h4>
+                                    <p className="text-xs text-slate-500 leading-snug">ابدأ بـ 10 دولارات فقط، مناسب للجميع.</p>
+                                </div>
+                            </div>
+
+                            {/* Feature 2 */}
+                            <div className="flex gap-3">
+                                <div className="w-10 h-10 shrink-0 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
+                                    <Zap size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-0.5">تنفيذ سريع</h4>
+                                    <p className="text-xs text-slate-500 leading-snug">سرعة تنفيذ عالية مع سبريد تنافسي.</p>
+                                </div>
+                            </div>
+
+                            {/* Feature 3 */}
+                            <div className="flex gap-3">
+                                <div className="w-10 h-10 shrink-0 rounded-xl bg-yellow-50 flex items-center justify-center text-yellow-600">
+                                    <Gift size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-0.5">بونصات الإيداع</h4>
+                                    <p className="text-xs text-slate-500 leading-snug">عروض ترويجية وبونصات متعددة.</p>
+                                </div>
+                            </div>
+
+                            {/* Feature 4 */}
+                            <div className="flex gap-3">
+                                <div className="w-10 h-10 shrink-0 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+                                    <ShieldCheck size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-0.5">أمان عالي</h4>
+                                    <p className="text-xs text-slate-500 leading-snug">منصة آمنة وموثوقة مع حماية الأموال.</p>
+                                </div>
+                            </div>
+
+                            {/* Feature 5 */}
+                            <div className="flex gap-3">
+                                <div className="w-10 h-10 shrink-0 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
+                                    <Smartphone size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-900 text-sm mb-0.5">منصات متعددة</h4>
+                                    <p className="text-xs text-slate-500 leading-snug">MT4/MT5، تطبيق الويب والموبايل.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Account Types */}
+                        <div className="mt-6 pt-4 border-t border-slate-50">
+                            <div className="flex items-center gap-2 mb-3 text-slate-900">
+                                <Layers size={16} className="text-slate-400" />
+                                <h3 className="font-bold text-sm">أنواع الحسابات</h3>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                <span className="px-3 py-1.5 bg-slate-50 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    حساب مايكرو
+                                </span>
+                                <span className="px-3 py-1.5 bg-slate-50 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    حساب عادي
+                                </span>
+                                <span className="px-3 py-1.5 bg-slate-50 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    حساب VIP
+                                </span>
+                            </div>
                         </div>
                     </div>
                ) : (
