@@ -5,6 +5,7 @@ export interface Broker {
   description: string;
   logoUrl: string;
   themeColor: string; // Tailwind class prefix or hex
+  referralLink?: string;
 }
 
 export type TransactionType = 'deposit' | 'withdraw' | 'register';

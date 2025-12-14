@@ -144,26 +144,30 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
             <AlertCircle size={36} strokeWidth={1.5} />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Redirecting to Broker</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">التوجيه إلى الوسيط</h3>
             <p className="text-slate-500 text-sm leading-relaxed max-w-xs mx-auto">
-                We are taking you to the official {broker.name} sign-up page.
+                سيتم توجيهك الآن إلى صفحة التسجيل الرسمية لـ {broker.name}.
             </p>
           </div>
           <div className="flex flex-col gap-3">
-            <button
+            <a
+              href={broker.referralLink || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => {
-                onClose();
-                alert(`Redirecting to ${broker.name} registration...`);
+                if (!broker.referralLink) {
+                  alert(`رابط التسجيل غير متاح للوسيط ${broker.name}`);
+                }
               }}
               className="w-full py-3.5 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
             >
-              Continue to Register
-            </button>
+              المتابعة إلى التسجيل
+            </a>
              <button
               onClick={onClose}
               className="w-full py-3.5 text-slate-500 font-medium hover:text-slate-800 transition-colors"
             >
-              Cancel
+              إلغاء
             </button>
           </div>
         </div>
