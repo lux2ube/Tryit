@@ -50,7 +50,21 @@ export const TransactionPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!broker || !['deposit', 'withdraw', 'register'].includes(type)) {
+    if (!broker) {
+      navigate('/');
+      return;
+    }
+    
+    // Auto-redirect for registration
+    if (type === 'register') {
+      if (broker.referralLink) {
+        window.open(broker.referralLink, '_blank');
+      }
+      navigate('/');
+      return;
+    }
+    
+    if (!['deposit', 'withdraw', 'register'].includes(type)) {
       navigate('/');
     }
   }, [broker, type, navigate]);
