@@ -67,7 +67,7 @@ export const BrokerPage: React.FC<BrokerPageProps> = ({ broker }) => {
              className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#1E293B] text-white rounded-2xl shadow-lg shadow-slate-200 active:scale-95 transition-all"
           >
              <UserPlus size={18} />
-             <span className="font-bold text-sm">فتح حساب حقيقي</span>
+             <span className="font-bold text-sm">فتح حساب تداول</span>
           </Link>
 
           {/* Deposit & Withdraw - Row */}

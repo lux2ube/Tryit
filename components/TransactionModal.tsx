@@ -57,6 +57,27 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
     return Object.keys(newErrors).length === 0;
   };
 
+  const saveToWhatsAppMemory = (id: string) => {
+    try {
+      const memory = JSON.parse(localStorage.getItem('whatsapp_conversations') || '[]');
+      memory.push({
+        id,
+        transactionId: id,
+        type,
+        broker: broker.name,
+        amount: formData.amount,
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber,
+        tradingAccount: formData.tradingAccount,
+        timestamp: new Date().toISOString(),
+        status: 'pending'
+      });
+      localStorage.setItem('whatsapp_conversations', JSON.stringify(memory));
+    } catch (error) {
+      console.error('Error saving WhatsApp memory:', error);
+    }
+  };
+
   const sendTelegramNotification = async (id: string) => {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
       // Notification skipped silently if config missing
@@ -101,6 +122,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
     setTimeout(async () => {
       const newId = generateTransactionId(broker.name.substring(0, 3).toUpperCase());
       setTransactionId(newId);
+      
+      // Save to WhatsApp conversation memory
+      saveToWhatsAppMemory(newId);
       
       // Send notification to Telegram
       await sendTelegramNotification(newId);
@@ -148,13 +172,15 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
 
     if (step === 'success') {
       const whatsappText = encodeURIComponent(
-        `Hello, I would like to accelerate my request.\n\n` +
-        `🆔 Transaction ID: ${transactionId}\n` +
-        `📌 Type: ${type.toUpperCase()}\n` +
-        `💰 Amount: ${formData.amount} USD\n` +
-        `🏢 Broker: ${broker.name}\n` +
-        `💼 Account: ${formData.tradingAccount}\n\n` +
-        `Please process this request.`
+        `السلام عليكم، أود تسريع طلبي.\n\n` +
+        `🆔 رقم المعاملة: ${transactionId}\n` +
+        `📌 نوع الطلب: ${type === 'deposit' ? 'إيداع' : type === 'withdraw' ? 'سحب' : 'تسجيل'}\n` +
+        `💰 المبلغ: ${formData.amount} دولار\n` +
+        `🏢 الوسيط: ${broker.name}\n` +
+        `👤 الاسم: ${formData.fullName}\n` +
+        `📱 رقم الهاتف: +967${formData.phoneNumber}\n` +
+        `💼 رقم الحساب: ${formData.tradingAccount}\n\n` +
+        `يرجى معالجة هذا الطلب بأسرع وقت ممكن. شكراً`
       );
       
       const whatsappUrl = `https://wa.me/967733353380?text=${whatsappText}`;
@@ -178,16 +204,19 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center w-full py-3.5 bg-[#25D366] text-white font-bold rounded-xl hover:bg-[#20bd5a] transition-all shadow-lg shadow-green-100 hover:shadow-green-200"
+              onClick={() => {
+                // Auto-direct to WhatsApp with all details pre-filled
+              }}
             >
               <MessageCircle className="mr-2" size={20} />
-              Accelerate via WhatsApp
+              تسريع عبر واتس أب
             </a>
             
             <button
               onClick={onClose}
               className="w-full py-3.5 bg-white border border-slate-200 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition-colors"
             >
-              Close
+              إغلاق
             </button>
           </div>
         </div>
@@ -222,7 +251,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
 
           {/* Trading Account */}
           <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Trading Account ID</label>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">رقم حساب لبتداول</label>
             <input
               type="text"
               placeholder="e.g. 2938472"
