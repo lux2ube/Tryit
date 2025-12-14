@@ -14,5 +14,12 @@ export const brokers: Record<string, Broker> = {
     description: 'خدمات تداول ECN متميزة مع تنفيذ فوري للصفقات.',
     logoUrl: 'https://valetax.com/wp-content/uploads/valetax-logo.svg', 
     themeColor: 'teal',
+  },
+  oneroyal: {
+    id: 'oneroyal',
+    name: 'OneRoyal',
+    description: 'منصة تداول موثوقة مع حد أدنى للإيداع من 10 دولارات فقط. ابدأ رحلتك الاستثمارية الآن',
+    logoUrl: 'https://mma.prnewswire.com/media/2657329/OneRoyal_FullColor_BlackBack_Logo.jpg',
+    themeColor: 'amber',
   }
 };
