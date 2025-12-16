@@ -7,7 +7,7 @@ export const brokers: Record<string, Broker> = {
     description: 'منصة سهلة جداً في الاستخدام وتناسب الجميع. ابدأ استثمارك حتى بـ 1$ فقط',
     logoUrl: 'https://hw.online/wp-content/themes/headway/img/logo.svg',
     themeColor: 'blue',
-    referralLink: 'https://headway.partners/user/signup?hwp=50ca6f',
+    referralLink: 'https://hw.site/user/signup?hwp=50ca6f',
   },
   valetax: {
     id: 'valetax',
