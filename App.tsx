@@ -1,18 +1,17 @@
-import React, { useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { HashRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 import { BrokerPage } from './components/BrokerPage';
 import { TransactionPage } from './components/TransactionPage';
 import { brokers } from './data/brokers';
 
 const LandingPage = () => {
-  const navigate = useNavigate();
+  const headwayBroker = brokers['headway'];
   
-  useEffect(() => {
-    // Redirect to Headway on landing
-    navigate('/headway');
-  }, [navigate]);
+  if (!headwayBroker) {
+    return <div className="p-10 text-center">الوسيط غير موجود</div>;
+  }
   
-  return null;
+  return <BrokerPage broker={headwayBroker} />;
 };
 
 // Wrapper to inject broker data based on URL param
