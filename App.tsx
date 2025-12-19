@@ -1,51 +1,18 @@
-import React from 'react';
-import { HashRouter as Router, Routes, Route, Link, useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { HashRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
 import { BrokerPage } from './components/BrokerPage';
 import { TransactionPage } from './components/TransactionPage';
 import { brokers } from './data/brokers';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
 
 const LandingPage = () => {
-  return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
-      <div className="max-w-md w-full">
-        
-        <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm mb-4 text-slate-900">
-               <ShieldCheck size={24} />
-            </div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">اختر الوسيط</h1>
-            <p className="text-slate-500 text-sm">اختر شريك التداول للمتابعة</p>
-        </div>
-        
-        <div className="space-y-4">
-            {Object.values(brokers).map((broker) => (
-                <Link 
-                    key={broker.id} 
-                    to={`/${broker.id}`}
-                    className="flex items-center p-4 bg-white hover:bg-white border border-slate-200 hover:border-slate-300 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 group"
-                >
-                    <div className={`w-16 h-14 shrink-0 rounded-xl border border-slate-100 p-1 flex items-center justify-center overflow-hidden shadow-sm ${broker.id === 'valetax' ? 'bg-black' : 'bg-white'}`}>
-                        <img 
-                            src={broker.logoUrl} 
-                            alt={broker.name} 
-                            className="w-full h-full object-contain"
-                        />
-                    </div>
-                    <div className="mr-4 flex-1">
-                        <h2 className="text-base font-bold text-slate-900">{broker.name}</h2>
-                        <p className="text-xs text-slate-500">{broker.description}</p>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-slate-50 group-hover:bg-slate-900 flex items-center justify-center transition-colors">
-                        {/* ArrowLeft because RTL */}
-                        <ArrowLeft size={14} className="text-slate-400 group-hover:text-white" />
-                    </div>
-                </Link>
-            ))}
-        </div>
-      </div>
-    </div>
-  );
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Redirect to Headway on landing
+    navigate('/headway');
+  }, [navigate]);
+  
+  return null;
 };
 
 // Wrapper to inject broker data based on URL param
